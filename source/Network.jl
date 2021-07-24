@@ -1,7 +1,7 @@
 module Network
 
-include("./Blockchain.jl")
-using .Blockchain: Transaction, Blockchain
+include("./Ledger.jl")
+using .Ledger: Transaction
 
 mutable struct Node
     pool::Dict{String,Transaction}
