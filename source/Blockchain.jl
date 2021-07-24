@@ -1,6 +1,8 @@
+module Blockchain
+
+export Transaction, Block
+
 using Dates
-
-
 
 struct Transaction
 	sender_id::UInt32
@@ -16,8 +18,9 @@ end
 struct Block
     block_id::UInt32
     timestamp_created::DateTime
-    transactions::Vector(Transaction)
+    transactions::Vector{Transaction}
     parent_hash::String
 
 end
 
+end
