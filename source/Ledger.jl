@@ -43,21 +43,31 @@ mutable struct Blockchain
     difficulty_level::UInt32
     mining_reward::Float32
 
-end
-
-	function verify_block()
-		# verify block size
-
-		# verify hash
+	function Blockchain(name, timestamp_created, timestamp_updated, blocks, max_block_size, difficulty_level, mining_reward)
+		new(name, timestamp_created, timestamp_updated, blocks, max_block_size, difficulty_level, mining_reward)
 	end
-
-
-	function append_block()
-	end
-
 
 	# Construct genesis block
-	function Blockchain()
+	function Blockchain(name, max_block_size=1, difficulty_level=0, mining_reward=0)
+		timestamp_created = Dates.now()
+		first_block = Block(42, timestamp_created, Transaction[], "Genesis block", 69)
+
+		new(name, timestamp_created, timestamp_created, Block[first_block], max_block_size, difficulty_level, mining_reward)
 	end
+
+end
+
+# Functions belonging to Blockchain struct
+
+function verify_block()
+	# verify block size
+
+	# verify hash
+end
+
+function append_block()
+end
+
+
 
 end
