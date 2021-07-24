@@ -20,6 +20,19 @@ struct Block
     timestamp_created::DateTime
     transactions::Vector{Transaction}
     parent_hash::String
+end
+
+
+mutable struct Blockchain
+    name::String
+    timestamp_created::DateTime
+    timestamp_updated::DateTime
+
+    blocks::Vector{Block}
+
+    max_block_size::UInt32
+    difficulty_level::UInt32
+    mining_reward::Float32
 
 end
 
