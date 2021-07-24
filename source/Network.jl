@@ -1,14 +1,16 @@
 module Network
+using SHA
+using Dates
 using Random
 
 include("./Ledger.jl")
-using .Ledger: Transaction, Blockchain
+using .Ledger: Transaction, Blockchain, Block, appendblock, gethash, checkdifficulty
 
 mutable struct Node
     pool::Dict{String,Transaction}
-    #blockchain::Blockchain
-    #Node() = new(Dict{String,Transaction}(), Blockchain())
-    Node() = new(Dict{String,Transaction}())
+    blockchain::Blockchain
+    Node() = new(Dict{String,Transaction}(), Blockchain("litcoin"))
+    #Node() = new(Dict{String,Transaction}())
 end
 
 # Initialize a fixed number of nodes
@@ -27,6 +29,10 @@ function addTransaction(node::Node, tx::Transaction)
     node.pool[tx.signature] = tx
 end
 
+function addBlock(node::Node, parent_hash::String, transactions::Vector{Transaction}, nonce::String)
+    node.blockchain.append_block(parent_hash, transactions, nonce)
+end
+
 function mine()
     # Select a random Node for getting the blockchain data
     node = getRandomNode()
@@ -34,14 +40,33 @@ function mine()
     # Start mining
     while true
         # Get transactions to verify
-        transactions = getNTransactions(node, 1)
+        transactions = getNTransactions(node, 5)
 
         # Get the previous block hash
-        # prev_block = getPreviousBlock(node)
+        parent_hash = node.blockchain.blocks[1].hash
 
         # Mine by trying different nonces
+        max_nonce = 2 ^ 32
+        mined = false
+        block = 0
+        for i in 0:max_nonce
+            nonce = randstring(64)
+            block = Block(0, Dates.now(), transactions, parent_hash, nonce)
+            if checkdifficulty(node.blockchain, block)
+                mined = true
+                break
+            end
+        end
 
         # If succesful, alert the network
+        if mined
+            accepted = appendblock(node.blockchain, block)
+            if accepted
+                #println("MINED")
+            else
+                println("NOPE")
+            end
+        end
 
         # Sleep a while
         sleep(0.5)
@@ -68,13 +93,16 @@ function observe()
     while true
         n_nodes = size(nodes, 1)
         n_tx_all = 0
+        longest_block = 0
 
         for n in nodes
             n_tx_all += length(n.pool)
+            longest_block = max(longest_block, size(n.blockchain.blocks, 1))
         end
 
         println("Number of nodes: $(lpad(n_nodes, 7))")
         println("Number of pooled transactions: $(lpad(n_tx_all, 7))")
+        println("Longest block: $(lpad(longest_block, 7))")
 
         # Sleep a while
         sleep(0.5)
