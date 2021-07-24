@@ -23,10 +23,11 @@ struct Block
     transactions::Vector{Transaction}
     parent_hash::String
     hash::String
+	proof_id::UInt32
 
-    function Block(block_id, timestamp_created, transactions, previous_hash, proof_id)
-        hash = sha2_256(string(transactions, previous_hash, proof_id))
-        new(block_id, timestamp_created, transactions, parent_hash, bytes2hex(hash))
+    function Block(block_id, timestamp_created, transactions, parent_hash, proof_id)
+        hash = sha2_256(string(transactions, parent_hash, proof_id))
+        new(block_id, timestamp_created, transactions, parent_hash, bytes2hex(hash), proof_id)
     end
 end
 
