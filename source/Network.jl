@@ -1,7 +1,7 @@
 module Network
 
-include("./Blockchain.jl")
-using .Blockchain: Transaction
+include("./Ledger.jl")
+using .Ledger: Transaction
 
 export Pool, getNTransactions
 
