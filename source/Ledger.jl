@@ -13,6 +13,7 @@ struct Transaction
 	quantity::Float32
 	message::String
 	signature::String
+	fee::Float32
 
 end
 
